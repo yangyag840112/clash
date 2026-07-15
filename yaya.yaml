@@ -7,6 +7,64 @@ dns:
   fake-ip-filter-mode: rule
   respect-rules: false
   prefer-h3: false
+  fake-ip-filter:
+    # 去广告
+    - RULE-SET,category-ads-all,real-ip
+    - RULE-SET,adblock,real-ip
+    # Bilibili
+    - RULE-SET,bilibili,real-ip
+    # Apple
+    - RULE-SET,apple@cn,real-ip
+    - RULE-SET,apple,real-ip
+    # TikTok
+    - RULE-SET,tiktok,fake-ip
+    # Emby
+    - RULE-SET,emby,fake-ip
+    # Netflix
+    - RULE-SET,netflix,fake-ip
+    # Disney
+    - RULE-SET,disney,fake-ip
+    # Spotify
+    - RULE-SET,spotify,fake-ip
+    # Speedtest
+    - RULE-SET,speedtest,real-ip
+    # GitHub
+    - RULE-SET,github,fake-ip
+    # Telegram
+    - RULE-SET,telegram,fake-ip
+    # YouTube
+    - RULE-SET,youtube,fake-ip
+    # Google
+    - RULE-SET,google,fake-ip
+    # Twitter
+    - RULE-SET,twitter,fake-ip
+    # Instagram
+    - RULE-SET,instagram,fake-ip
+    # Facebook
+    - RULE-SET,facebook,fake-ip
+    # Steam
+    - RULE-SET,steam@cn,real-ip
+    - RULE-SET,steam,real-ip
+    # Microsoft
+    - RULE-SET,microsoft@cn,real-ip
+    - RULE-SET,microsoft,real-ip
+    # Xbox
+    - RULE-SET,xbox,real-ip
+    # PlayStation
+    - RULE-SET,playstation,real-ip
+    # Nintendo
+    - RULE-SET,nintendo@cn,real-ip
+    - RULE-SET,nintendo,real-ip
+    # Porn
+    - RULE-SET,category-porn,fake-ip
+    # AI
+    - RULE-SET,category-ai-!cn,fake-ip
+    # 国外网站
+    - RULE-SET,geolocation-!cn,fake-ip
+    # 国内网站
+    - RULE-SET,cn,real-ip
+    # 漏网之鱼
+    - MATCH,real-ip
   nameserver:
     - 223.5.5.5
     - 223.6.6.6
@@ -27,26 +85,96 @@ proxies:
     remote-dns-resolve: true
     dns: [ 1.1.1.1, 8.8.8.8 ]
 
-proxy-groups:
-  - name: "国外流量"
-    type: select
-    proxies:
-      - "MASQUE"
-      - "DIRECT"
+# 机场配置模块
+provider_config: &provider_config {"type": "http","interval": 86400,"user-agent": "clash","health-check": {"enable": true,"url": "http://latency-test.skk.moe/endpoint","interval": 300}}
 
-rules:
-  # 常见海外流媒体与网站走 MASQUE
-  - DOMAIN-KEYWORD,youtube,国外流量
-  - DOMAIN-KEYWORD,google,国外流量
-  - DOMAIN-KEYWORD,netflix,国外流量
-  - DOMAIN-KEYWORD,disney,国外流量
-  - DOMAIN-KEYWORD,telegram,国外流量
-  - DOMAIN-KEYWORD,twitter,国外流量
-  - DOMAIN-KEYWORD,facebook,国外流量
-  - DOMAIN-KEYWORD,instagram,国外流量
-  - DOMAIN-KEYWORD,tiktok,国外流量
-  # 局域网与国内直连
-  - GEOIP,lan,DIRECT
-  - GEOIP,cn,DIRECT
-  # 漏网之鱼
-  - MATCH,国外流量
+proxy-providers:
+  机场1:
+    url: "https://xxxxxxx" # 填入你真实的机场1订阅
+    <<: *provider_config
+    override:
+      additional-prefix: "[机场1]"
+  机场2:
+    url: "https://xxxxx"   # 填入你真实的机场2订阅
+    <<: *provider_config
+    override:
+      additional-prefix: "[机场2]"
+  机场3:
+    url: "https://xxxxxx"  # 填入你真实的机场3订阅
+    <<: *provider_config
+    override:
+      additional-prefix: "[机场3]"
+
+# 分组配置模块（已剔除所有国旗和表情）
+standard_proxies: &standard_proxies {"type": "select", "proxies": ["MASQUE", "自动选择", "美国节点", "香港节点", "日本节点", "台湾节点", "新加坡节点", "韩国节点", "其他节点", "DIRECT"], "include-all": true}
+
+# 节点配置模块
+filter_proxies: &filter_proxies {"type": "url-test", "url": "http://latency-test.skk.moe/endpoint", "interval": 300, "tolerance": 100, "include-all": true}
+
+proxy-groups:
+  - name: AI
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ChatGPT.png"
+    <<: *standard_proxies
+
+  - name: YouTube
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/YouTube.png"
+    <<: *standard_proxies  
+      
+  - name: Emby
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Emby.png"
+    <<: *standard_proxies
+
+  - name: TikTok
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/TikTok.png"
+    <<: *standard_proxies
+    
+  - name: Bilibili
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/bilibili.png"
+    <<: *standard_proxies
+      
+  - name: Netflix
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Netflix.png"
+    <<: *standard_proxies
+
+  - name: Disney
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Disney.png"
+    <<: *standard_proxies
+
+  - name: Telegram
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png"
+    <<: *standard_proxies
+      
+  - name: Twitter
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Twitter.png"
+    <<: *standard_proxies
+
+  - name: Instagram
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Instagram.png"
+    <<: *standard_proxies
+
+  - name: Facebook
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Facebook.png"
+    <<: *standard_proxies
+
+  - name: Spotify
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Spotify.png"
+    <<: *standard_proxies
+
+  - name: Speedtest
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Speedtest.png"
+    <<: *standard_proxies
+
+  - name: GitHub
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/GitHub.png"
+    <<: *standard_proxies
+
+  - name: Google
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Google_Search.png"
+    <<: *standard_proxies
+
+  - name: Apple
+    icon: "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple_1.png"
+    <<: *standard_proxies
+
+  - name: Microsoft
+    icon: "https://
